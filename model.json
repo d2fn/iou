@@ -1,0 +1,26 @@
+{
+  "expenses":[
+    {"name":"Kate","amount": 45.40},
+    {"name":"Kate","amount":25.86},
+    {"name":"Dietrich","amount": 185.00},
+    {"name":"Jamie"},
+    {"name":"Sarah"}
+  ] ,
+  "totals":{
+    "Kate":71.26,
+    "Dietrich":185.00
+  },
+  "corrections":[
+    { "name":"Jamie",
+      "owed":[
+        {"name":"Kate","amount":60.00},
+        {"name":"Dietrich","amount":37.20}
+      ]}
+    ,
+    { "name":"Sarah",
+      "owed":[
+        {"name":"Kate","amount":60.00},
+        {"name":"Dietrich","amount":37.20}
+      ]}
+  ]
+}

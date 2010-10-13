@@ -1,0 +1,62 @@
+#input {
+	float: left;
+	border: 1px dotted #9b9a9b;
+}
+
+p.name {
+	font-weight: bold;
+	font-size: 20px;
+	line-height: 4px;
+	padding: 0 0 1px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	color: #5c35e8;
+}
+
+.payment {
+  color: #00CC00;
+}
+
+.debt {
+  color: #FF0000;
+}
+
+p.total {
+	text-align: center;	
+  font-size: 3em;
+	margin: 0;
+	padding: 0;
+}
+
+.percap {
+	text-align: center;
+}
+
+.amount {
+  font-family: Courier, "Courier New", mono;
+}
+
+#content {
+	width: 780px;
+}
+
+#corrections {
+	direction: ltr;
+	text-align: left;
+	float: right;
+}
+
+div.personblock {
+	background-color: rgba(253,246,82,0.26);
+	margin: 5px 5px 5px 10px;
+	padding: 0 5px 10px;
+	border: 1px dotted #848484;
+}
+
+p.personblock {
+  line-height: 5px;
+}
+
+body {
+	font: large Garamond;
+}

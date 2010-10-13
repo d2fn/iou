@@ -1,0 +1,143 @@
+<html>
+<head>
+  <title>Simple. Stateless. Expense Tracking.</title>
+  <link rel="stylesheet" type="text/css" href="style.css"> 
+  <script src="jquery-1.4.2.js"></script>
+  <script src="util.js"></script>
+  <script src="jquery-1.4.2.js"></script>
+  <script>
+
+    $(document).ready(
+          function() {
+            var exptable = $("form > table");
+            for (var i = 0; i < 14; i++) { // it's a magic number, deal with it
+              exptable.append(
+                      '<tr class="expenseline">' +
+                              '<td><input type="text" class="name"/></td>' +
+                              '<td><input type="text" class="amount"/></tr>');
+            }
+
+            $("input").keyup(function() {
+              tabulate();
+            });
+          });
+
+    // tabulatin' ain't easy
+    function tabulate() {
+
+      var model = new Model();
+
+      // this is where all the personal correction blocks go, in this div
+      var correctionsblock = $("#corrections").empty();
+
+      var expenselines = $("tr.expenseline");
+
+      // tabulate the total amount of money each person spent
+      expenselines.each(function(index) {
+
+        var nameInput   = $(this).find('input.name');
+        var amountInput = $(this).find('input.amount');
+
+        var name = nameInput.val();
+        var amountStr = amountInput.val();
+
+        if (name.length > 0) {
+          var amount = 0.00;
+          if (amountStr.length > 0) {
+            amount = parseFloat(amountStr)
+          }
+
+          model.addPerson(new Person(name,amount))
+        }
+      });
+
+      model.commit();
+
+      $("#totals > p").empty().append(totalBlock(model.total,model.getPerPersonCost()));
+
+      // process payments
+      if(model.hasPayments()) {
+        var payer = model.popPayer();
+        while(model.receivers.length > 0) {
+          var receiver = model.popReceiver();
+          while(receiver && receiver.getAmountToReceive() > 0) {
+            var payment = payer.pay(receiver);
+            if(payer.getAmountToPay() > receiver.getAmountToReceive()) {
+              // payer owes more than receiver gets
+              // so payer pays off receiver, and we advance to the next receiver
+              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
+              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
+              receiver = model.popReceiver();
+            }
+            else if(payer.getAmountToPay() < receiver.getAmountToReceive()) {
+              // payer pays what they owe to this receiver and we advance to the next payer
+              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
+              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
+              payer = model.popPayer();
+            }
+            else {
+              // payer and receiver are in equilibrium, advance both
+              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
+              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
+              receiver = model.popReceiver();
+              payer = model.popPayer();
+            }
+          }
+        }
+      }
+    }
+
+    function totalBlock(total,perPerson) {
+      return "<p class=\"total\"><span class=\"amount\">" +
+              curr(total) +
+              "</span></p><p class=\"percap\"><span class=\"amount\">" +
+              curr(perPerson) +
+              "</span> per person</p>";
+    }
+
+  </script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-1936932-3']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+<body>
+
+<div id="content">
+
+  <div id="personaltotals">
+    <p></p>
+  </div>
+
+  <div id="corrections">
+  </div>
+
+  <div id="input">
+    <form>
+      <table>
+        <thead>
+        <tr>
+          <td>Name</td>
+          <td>Amount</td>
+        </tr>
+        </thead>
+        <tr class="expenseline">
+          <td><input type="text" class="name"/></td>
+          <td><input type="text" class="amount"></td>
+        </tr>
+      </table>
+    </form>
+    <div id="totals">
+      <p></p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
