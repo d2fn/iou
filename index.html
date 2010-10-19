@@ -4,7 +4,7 @@
   <link rel="stylesheet" type="text/css" href="style.css"> 
   <script src="jquery-1.4.2.js"></script>
   <script src="util.js"></script>
-  <script src="jquery-1.4.2.js"></script>
+  <script src="iou.js"></script>
   <script>
 
     $(document).ready(
@@ -62,23 +62,19 @@
           var receiver = model.popReceiver();
           while(receiver && receiver.getAmountToReceive() > 0) {
             var payment = payer.pay(receiver);
+            payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
+            receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
             if(payer.getAmountToPay() > receiver.getAmountToReceive()) {
               // payer owes more than receiver gets
               // so payer pays off receiver, and we advance to the next receiver
-              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
-              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
               receiver = model.popReceiver();
             }
             else if(payer.getAmountToPay() < receiver.getAmountToReceive()) {
               // payer pays what they owe to this receiver and we advance to the next payer
-              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
-              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
               payer = model.popPayer();
             }
             else {
               // payer and receiver are in equilibrium, advance both
-              payer.div.append("<p class=\"personblock correction\"><span class=\"amount\">" + curr(payment)  + "</span> to " + receiver.name + "</p>");
-              receiver.div.append("<p class=\"personblock correction\"><span class=\"amount\">"+curr(payment) + "</span> from " + payer.name + "</p>");
               receiver = model.popReceiver();
               payer = model.popPayer();
             }
